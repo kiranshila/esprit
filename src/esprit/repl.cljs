@@ -1,6 +1,7 @@
 (ns esprit.repl
   (:require
     [clojure.string :as string]
+    [esprit.from.cljs.repl :as cljs-repl]
     [esprit.indicators :as ind]))
 
 (ind/indicate-eval false)
@@ -79,6 +80,15 @@
     (ind/indicate-joining-wifi)
     (.connect wifi wifi-ssid #js {:password wifi-password} (fn [])))
   (ind/indicate-no-wifi-creds))
+
+;; Monkey patch in cljs.repl functions
+
+(set! cljs.repl #js {})
+(set! cljs.repl/print-doc cljs-repl/print-doc)
+(set! cljs.repl/Error->map cljs-repl/Error->map)
+(set! cljs.repl/ex-triage cljs-repl/ex-triage)
+(set! cljs.repl/ex-str cljs-repl/ex-str)
+(set! cljs.repl/error->str cljs-repl/error->str)
 
 ;; workaround a bug where last form doesn't seem to be evaluated
 (def ^:private dummy 3)
